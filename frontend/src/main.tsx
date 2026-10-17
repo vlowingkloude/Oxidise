@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import {
   createEntry,
   deleteEntry,
@@ -51,6 +52,7 @@ function App() {
   const [loadingWorkspace, setLoadingWorkspace] = useState(true);
   const [status, setStatus] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [sidebarVisible, setSidebarVisible] = useState(() => window.localStorage.getItem("oxidize.sidebarVisible") !== "false");
 
   const activeDocument = useMemo(
     () => documents.find((document) => document.path === activePath) ?? null,
@@ -445,9 +447,27 @@ function App() {
     });
   }
 
+  function toggleSidebar() {
+    setSidebarVisible((visible) => {
+      const next = !visible;
+      window.localStorage.setItem("oxidize.sidebarVisible", String(next));
+      return next;
+    });
+  }
+
   return (
-    <main className="appShell">
+    <main className={`appShell${sidebarVisible ? "" : " sidebarHidden"}`}>
       <header className="titleBar">
+        <button
+          type="button"
+          className="sidebarToggle"
+          onClick={toggleSidebar}
+          title={sidebarVisible ? "Hide sidebar" : "Show sidebar"}
+          aria-label={sidebarVisible ? "Hide sidebar" : "Show sidebar"}
+          aria-expanded={sidebarVisible}
+        >
+          {sidebarVisible ? <PanelLeftClose size={17} /> : <PanelLeftOpen size={17} />}
+        </button>
         <div className="brandMark">O</div>
         <strong>Oxidize</strong>
         <span className="titleWorkspace">{workspace?.name ?? "Lightweight development environment"}</span>

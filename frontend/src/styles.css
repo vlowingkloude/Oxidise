@@ -11,15 +11,20 @@ html, body, #root { width: 100%; height: 100%; margin: 0; overflow: hidden; }
 button, input { font: inherit; }
 button { color: inherit; }
 
-.appShell { width: 100%; height: 100%; display: grid; grid-template-rows: 38px minmax(0, 1fr); background: #17191d; }
+.appShell { --sidebar-width: 270px; width: 100%; height: 100%; display: grid; grid-template-rows: 38px minmax(0, 1fr); background: #17191d; }
 .titleBar { display: flex; align-items: center; gap: 9px; padding: 0 12px; background: #202329; border-bottom: 1px solid #2c3037; user-select: none; }
+.sidebarToggle { flex: 0 0 auto; width: 28px; height: 28px; display: inline-grid; place-items: center; padding: 0; border: 0; border-radius: 5px; color: #9da4ae; background: transparent; cursor: pointer; }
+.sidebarToggle:hover { color: #f2f3f5; background: #343941; }
 .brandMark, .welcomeMark { display: grid; place-items: center; color: #16181c; background: linear-gradient(145deg, #e49a50, #b96831); font-family: Georgia, serif; font-weight: 900; }
 .brandMark { width: 22px; height: 22px; border-radius: 7px; font-size: 14px; }
 .titleBar > strong { font-size: 13px; letter-spacing: .2px; }
 .titleWorkspace { color: #8d949f; font-size: 12px; padding-left: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .titleStatus { margin-left: auto; max-width: 48%; color: #8d949f; font-size: 12px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
 .globalError { color: #e08080; }
-.workbench { min-height: 0; display: grid; grid-template-columns: 270px minmax(0, 1fr); }
+.workbench { min-height: 0; display: grid; grid-template-columns: var(--sidebar-width) minmax(0, 1fr); }
+.appShell.sidebarHidden { --sidebar-width: 0px; }
+.appShell.sidebarHidden .workbench { grid-template-columns: minmax(0, 1fr); }
+.appShell.sidebarHidden .sidebar { display: none; }
 
 .sidebar { min-width: 0; min-height: 0; display: flex; flex-direction: column; background: #202329; border-right: 1px solid #2c3037; }
 .sidebarHeader { height: 37px; display: flex; align-items: center; justify-content: space-between; padding: 0 8px 0 14px; color: #9299a4; font-size: 10px; letter-spacing: .9px; }
@@ -104,8 +109,9 @@ kbd { border: 1px solid #414750; border-bottom-color: #535b67; border-radius: 3p
 
 .terminalLauncher { position: fixed; z-index: 30; right: 20px; bottom: 18px; width: 44px; height: 44px; display: grid; place-items: center; border: 1px solid #58606b; border-radius: 14px; color: #e2e5e9; background: #292e35; box-shadow: 0 8px 28px #0008; cursor: pointer; }
 .terminalLauncher:hover { border-color: #d18446; background: #363c45; transform: translateY(-1px); }
-.terminalPanel { position: fixed; z-index: 25; right: 18px; bottom: 16px; width: min(760px, calc(100vw - 310px)); height: 330px; display: grid; grid-template-rows: 34px minmax(0, 1fr); overflow: hidden; border: 1px solid #3b414a; border-radius: 8px; background: #101216; box-shadow: 0 18px 60px #000c; }
-.terminalPanel.expanded { top: 56px; bottom: 16px; height: auto; width: calc(100vw - 310px); }
+.terminalPanel { position: fixed; z-index: 25; right: 18px; bottom: 16px; width: min(760px, calc(100vw - var(--sidebar-width) - 36px)); height: 330px; display: grid; grid-template-rows: 34px minmax(0, 1fr); overflow: hidden; border: 1px solid #3b414a; border-radius: 8px; background: #101216; box-shadow: 0 18px 60px #000c; }
+.terminalPanel.expanded { top: 56px; bottom: 16px; height: auto; width: calc(100vw - var(--sidebar-width) - 36px); }
+.appShell.sidebarHidden .terminalPanel:not(.expanded) { width: min(1000px, calc(100vw - var(--sidebar-width) - 36px)); }
 .terminalPanel > header { display: flex; align-items: center; justify-content: space-between; padding: 0 5px 0 10px; border-bottom: 1px solid #2d323a; background: #20242a; }
 .terminalPanel > header > div { display: flex; align-items: center; gap: 7px; }
 .terminalPanel > header strong { font-size: 11px; }
@@ -116,8 +122,7 @@ kbd { border: 1px solid #414750; border-bottom-color: #535b67; border-radius: 3p
 .terminalSurface { min-width: 0; min-height: 0; padding: 6px 7px; }
 
 @media (max-width: 760px) {
-  .workbench { grid-template-columns: 210px minmax(0, 1fr); }
-  .terminalPanel, .terminalPanel.expanded { width: calc(100vw - 230px); }
+  .appShell { --sidebar-width: 210px; }
   .titleWorkspace { display: none; }
   .editorMeta .lspStatus { display: none; }
 }
@@ -556,4 +561,8 @@ kbd {
   .editorMeta .lspStatus { display: none; }
   .saveOption { display: none; }
   .workspacePalette { max-height: 80vh; }
+  .sidebarToggle { width: 30px; height: 30px; }
 }
+
+.sidebarToggle { color: #657b83; }
+.sidebarToggle:hover { color: #073642; background: #ddd6c4; }
